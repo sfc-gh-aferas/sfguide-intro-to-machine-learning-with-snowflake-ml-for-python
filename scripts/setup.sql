@@ -62,39 +62,19 @@ CREATE OR REPLACE GIT REPOSITORY GITHUB_INTEGRATION_ML_HOL
 -- fetch most recent files from Github repository
 ALTER GIT REPOSITORY GITHUB_INTEGRATION_ML_HOL FETCH;
 
--- copy notebooks into Snowflake & configure runtime settings
-CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST
-FROM '@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main' 
-MAIN_FILE = 'notebooks/0_start_here.ipynb' 
-QUERY_WAREHOUSE = ML_HOL_WH
-RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
-COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
-IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
-
-ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST ADD LIVE VERSION FROM LAST;
-ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration');
-
-CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM
-FROM '@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main' 
-MAIN_FILE = 'notebooks/1_sf_nb_snowflake_ml_feature_transformations.ipynb' 
-QUERY_WAREHOUSE = ML_HOL_WH
-RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
-COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
-IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
-
-ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM ADD LIVE VERSION FROM LAST;
-ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration');
-
-CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING
-FROM '@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main' 
-MAIN_FILE = 'notebooks/2_sf_nb_snowflake_ml_model_training_inference.ipynb' 
-QUERY_WAREHOUSE = ML_HOL_WH
-RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
-COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
-IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
-
-ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING ADD LIVE VERSION FROM LAST;
-ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration');
+-- =============================================================================
+-- NOTEBOOKS IN WORKSPACES MIGRATION
+-- =============================================================================
+-- The notebooks in this repository have been migrated to work with Snowflake
+-- Notebooks in Workspaces. To use them:
+--
+-- 1. Open your Snowflake Workspace
+-- 2. Clone this repository using the git integration below
+-- 3. Open the notebooks directly in the Workspace IDE
+--
+-- The notebooks will use the git integration created above for repository access.
+-- Each notebook sets its own session context (role, warehouse, database, schema).
+-- =============================================================================
 
 -- create Streamlit
 CREATE OR REPLACE STREAMLIT ML_HOL_STREAMLIT_APP
